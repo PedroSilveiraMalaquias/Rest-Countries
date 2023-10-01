@@ -22,23 +22,19 @@ async def fetch_country_data(session, url):
         return await response.json()
 
 async def get_northern_european_countries_data():
-    url = "https://restcountries.com/v3.1/all"
+    url = "https://restcountries.com/v3.1/subregion/Northern Europe"
     async with aiohttp.ClientSession() as session:
         countries_data = await fetch_country_data(session, url)
         
-        # Filter for Northern European countries and specific fields
-        filtered_data = []
+        to_df_data = []
         for country in countries_data:
-            region = country.get('region', '')
-            if region.lower() == 'europe' and country.get('subregion', '').lower() == 'northern europe':
-                filtered_data.append({
+                to_df_data.append({
                     'nation_official_name': country.get('name', {}).get('official', ''),
                     'currency_name': list(country.get('currencies', {}).keys())[0] if country.get('currencies', {}) else '',
                     'population': country.get('population', 0)
                 })
                 
-        # Load the filtered data into a single index Pandas DataFrame
-        df = pd.DataFrame(filtered_data)
+        df = pd.DataFrame(to_df_data)
         return df
 
 # Run the async function to get the data
